@@ -1,6 +1,7 @@
 import type { StateCreator } from "zustand";
 import type { Recipe } from "../types";
 import { createRecipeSlice, type RecipesSliceType } from "./recipeSlice";
+import { type NotificationSliceType } from "./notificationSlice";
 
 export type FavoritesSliceType = {
     favorites: Recipe[];
@@ -9,29 +10,32 @@ export type FavoritesSliceType = {
     loadFromStorage: () => void;
 }
 
-export const createFavoritesSlice : StateCreator<FavoritesSliceType & RecipesSliceType, [], [], FavoritesSliceType> = (set, get, api) => ({
+export const createFavoritesSlice : StateCreator<FavoritesSliceType & RecipesSliceType & NotificationSliceType, [], [], FavoritesSliceType> = (set, get, api) => ({
     favorites: [],
     handleClickFavorite: (recipe) => {
-    set((state) => {
-        const exists = state.favorites.some(
-            favorite => favorite.idDrink === recipe.idDrink
-        )
+        if (get().favoriteExists(recipe.idDrink)) {
+            set((state) => ({
+                favorites: state.favorites.filter(fav => fav.idDrink !== recipe.idDrink)
+            }))
 
-        const updatedFavorites = exists
-            ? state.favorites.filter(f => f.idDrink !== recipe.idDrink)
-            : [...state.favorites, recipe]
+            get().showNotification({
+                text: "Receta eliminada de favoritos",
+                error: false
+            })
+       } else {
+            set((state) => ({
+                favorites: [...state.favorites, recipe]
+            }))
 
-        localStorage.setItem(
-            'favorites',
-            JSON.stringify(updatedFavorites)
-        )
-
-        return { favorites: updatedFavorites }
-    })
-
-    createRecipeSlice(set, get, api).closeModal()
+            get().showNotification({
+                text: "Receta añadida a favoritos",
+                error: false
+            })
 }
-,
+
+        createRecipeSlice(set, get, api).closeModal()
+        localStorage.setItem('favorites', JSON.stringify(get().favorites))
+    },
     favoriteExists: (id) => {
         return get().favorites.some(favorite => favorite.idDrink === id)
     },
