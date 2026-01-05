@@ -68,6 +68,15 @@ export default function Header() {
                         : "text-slate-200 font-bold hover:text-white uppercase"
                     }
                     >Favoritos</NavLink>  
+
+                    <NavLink
+                    to="/generate"
+                    className={({ isActive }) =>
+                      isActive
+                        ? "text-orange-500 font-bold uppercase"
+                        : "text-slate-200 font-bold hover:text-white uppercase"
+                    }
+                    >Generar con IA</NavLink> 
                                   
                 </nav>
             </div>
