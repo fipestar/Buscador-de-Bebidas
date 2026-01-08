@@ -7,17 +7,17 @@ import type { Recipe } from '../types';
 export default function Modal() {
   const modal = useAppStore((state) => state.modal)
   const closeModal = useAppStore((state) => state.closeModal)
-  const selectedRecipe = useAppStore((state) => state.selectedRecipe)
+  const activeRecipe = useAppStore((state) => state.activeRecipe)
   const handleClickFavorite = useAppStore((state) => state.handleClickFavorite)
   const favoriteExists = useAppStore((state) => state.favoriteExists)
 
   const renderIngredients = () => {
     const ingredients : JSX.Element[] = []
-    if(!selectedRecipe) return null
+    if(!activeRecipe) return null
     
-    for(let i = 1; i <= 6; i++){
-        const ingredient = selectedRecipe[`strIngredient${i}` as keyof Recipe]
-        const measure = selectedRecipe[`strMeasure${i}` as keyof Recipe]
+    for(let i = 1; i <= 15; i++){
+        const ingredient = activeRecipe[`strIngredient${i}` as keyof Recipe]
+        const measure = activeRecipe[`strMeasure${i}` as keyof Recipe]
         if(ingredient && measure){
             ingredients.push(
                 <li key={i} className='text-lg font-normal'>
@@ -58,11 +58,11 @@ export default function Modal() {
               >
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6" >
                   <Dialog.Title as="h3" className="text-gray-900 text-4xl font-extrabold my-5 text-center">
-                      {selectedRecipe?.strDrink}
+                      {activeRecipe?.strDrink}
                   </Dialog.Title>
                   <img 
-                     src={selectedRecipe?.strDrinkThumb} 
-                     alt={`imagen de ${selectedRecipe?.strDrink}`} 
+                     src={activeRecipe?.strDrinkThumb} 
+                     alt={`imagen de ${activeRecipe?.strDrink}`} 
                      className='mx-auto w-96'
                      />
                   <Dialog.Title as="h3" className="text-gray-900 text-2xl font-extrabold my-5">
@@ -72,7 +72,7 @@ export default function Modal() {
                   <Dialog.Title as="h3" className="text-gray-900 text-2xl font-extrabold my-5">
                     Instrucciones
                   </Dialog.Title>
-                  <p className='text-lg'>{selectedRecipe?.strInstructions}</p>
+                  <p className='text-lg'>{activeRecipe?.strInstructions}</p>
 
                   <div className='mt-5 flex justify-between gap-4'>
                       <button
@@ -84,8 +84,8 @@ export default function Modal() {
                        <button
                          type='button'
                          className='w-full rounded bg-orange-500 p-3 font-bold uppercase text-white shadow hover:bg-orange-600'
-                         onClick={() => handleClickFavorite(selectedRecipe as Recipe)}
-                      >{favoriteExists(selectedRecipe?.idDrink as string) ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}</button>
+                         onClick={() => handleClickFavorite(activeRecipe as Recipe)}
+                      >{favoriteExists(activeRecipe?.idDrink as string) ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}</button>
 
                       
                   </div>
